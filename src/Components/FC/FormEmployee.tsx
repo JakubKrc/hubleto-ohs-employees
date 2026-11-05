@@ -6,7 +6,7 @@ import Input from '@hubleto/react-ui/components/fc/FormComponents/Input';
 import { useRecordField } from '@hubleto/react-ui/components/fc/FormRecordStore';
 
 const componentName = 'FormEmployee';
-const parentApp = 'Hubleto/App/External/WaiBlue/HlthcrEmployees';
+const parentApp = 'Hubleto/App/External/WaiBlue/OhsEmployees';
 const T = new Translator(parentApp + '/Loader', 'Components/' + componentName);
 
 // The job dropdown offers only jobs of the selected branch. Hubleto FC lookups do not send the form values,
@@ -63,7 +63,7 @@ const FormEmployee = (props: FormProps) => <Form
   componentName={componentName}
   parentApp={parentApp}
   model={parentApp + '/Models/Employee'}
-  urlSlug='hlthcr-employees/employees'
+  urlSlug='ohs/employees/employees'
   title={{field: 'name', sub: T.translate('Employee')}}
   tabs={{default: {title: <b>{T.translate('Employee')}</b>, content: () => <TabDefault />}}}
   {...props}

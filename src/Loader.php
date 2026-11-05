@@ -1,15 +1,15 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees;
 
 use Hubleto\App\Community\Customers\Models\Customer;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\Branch;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\Job;
-use Hubleto\App\External\WaiBlue\HlthcrCore\Services\DemoData;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\Branch;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\Job;
+use Hubleto\App\External\WaiBlue\OhsCore\Services\DemoData;
 
-class Loader extends \Hubleto\App\External\WaiBlue\HlthcrCore\HlthcrApp
+class Loader extends \Hubleto\App\External\WaiBlue\OhsCore\OhsApp
 {
-  const ARCHIVE_URL = 'hlthcr-employees/employees?filters['
+  const ARCHIVE_URL = 'ohs/employees/employees?filters['
     . Models\RecordManagers\Employee::STATUS_FILTER . ']='
     . Models\RecordManagers\Employee::STATUS_FILTER_INACTIVE;
 
@@ -18,10 +18,10 @@ class Loader extends \Hubleto\App\External\WaiBlue\HlthcrCore\HlthcrApp
     parent::init();
 
     $this->router()->get([
-      '/^hlthcr-employees\/?$/' => Controllers\Home::class,
-      '/^hlthcr-employees\/settings\/?$/' => Controllers\Settings::class,
+      '/^ohs\/employees\/?$/' => Controllers\Home::class,
+      '/^ohs\/employees\/settings\/?$/' => Controllers\Settings::class,
     ]);
-    $this->router()->crud('hlthcr-employees/employees', Controllers\Employees::class);
+    $this->router()->crud('ohs/employees/employees', Controllers\Employees::class);
 
     $this->addSearchSwitch('z', 'employees');
 
@@ -45,8 +45,8 @@ class Loader extends \Hubleto\App\External\WaiBlue\HlthcrCore\HlthcrApp
 
     foreach ($expressions as $expression) {
       $employeesQuery = $employeesQuery->where(function ($matchingEmployee) use ($expression) {
-        $matchingEmployee->orWhere('hlthcr_employees.name', 'like', '%' . $expression . '%');
-        $matchingEmployee->orWhere('hlthcr_employees.personal_number', 'like', '%' . $expression . '%');
+        $matchingEmployee->orWhere('ohs_employees.name', 'like', '%' . $expression . '%');
+        $matchingEmployee->orWhere('ohs_employees.personal_number', 'like', '%' . $expression . '%');
       });
     }
 
@@ -55,7 +55,7 @@ class Loader extends \Hubleto\App\External\WaiBlue\HlthcrCore\HlthcrApp
       $results[] = [
         'id' => $employee['id'],
         'label' => $employee['name'],
-        'url' => 'hlthcr-employees/employees/' . $employee['id'],
+        'url' => 'ohs/employees/employees/' . $employee['id'],
         'description' => $employee['personal_number'] ?? '',
       ];
     }
@@ -67,9 +67,9 @@ class Loader extends \Hubleto\App\External\WaiBlue\HlthcrCore\HlthcrApp
     return '
       ' . $this->secondSidebarTitle() . '
       <div class="app-sidebar-buttons">
-        ' . $this->secondSidebarButton('hlthcr-employees/employees', 'fas fa-users', $this->translate('Employees')) . '
+        ' . $this->secondSidebarButton('ohs/employees/employees', 'fas fa-users', $this->translate('Employees')) . '
         ' . $this->secondSidebarButton(self::ARCHIVE_URL, 'fas fa-box-archive', $this->translate('Archive')) . '
-        ' . $this->secondSidebarButton('hlthcr-employees/settings', 'fas fa-cog', $this->translate('Settings')) . '
+        ' . $this->secondSidebarButton('ohs/employees/settings', 'fas fa-cog', $this->translate('Settings')) . '
       </div>
     ';
   }
@@ -84,7 +84,7 @@ class Loader extends \Hubleto\App\External\WaiBlue\HlthcrCore\HlthcrApp
     return 0;
   }
 
-  public function generateHlthcrDemoData(): void
+  public function generateOhsDemoData(): void
   {
     /** @var Models\Employee */
     $mEmployee = $this->getModel(Models\Employee::class);

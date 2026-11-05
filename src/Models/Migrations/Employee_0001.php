@@ -1,6 +1,6 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees\Models\Migrations;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees\Models\Migrations;
 
 use Hubleto\Framework\Migration;
 
@@ -8,7 +8,7 @@ class Employee_0001 extends Migration
 {
   public function upgradeSchema(): void
   {
-    $this->db->execute("CREATE TABLE IF NOT EXISTS `hlthcr_employees` (
+    $this->db->execute("CREATE TABLE IF NOT EXISTS `ohs_employees` (
       `id` int(8) primary key auto_increment,
       `name` varchar(255) NOT NULL,
       `date_of_birth` date NULL DEFAULT NULL,
@@ -33,19 +33,19 @@ class Employee_0001 extends Migration
 
   public function downgradeSchema(): void
   {
-    $this->db->execute("DROP TABLE IF EXISTS `hlthcr_employees`");
+    $this->db->execute("DROP TABLE IF EXISTS `ohs_employees`");
   }
 
   public function upgradeForeignKeys(): void
   {
     // RESTRICT: a branch with employees (and later their medical exams) cannot be deleted by accident.
-    $this->db->execute("ALTER TABLE `hlthcr_employees` ADD CONSTRAINT `fk__hlthcr_employees__id_branch` FOREIGN KEY (`id_branch`) REFERENCES `hlthcr_branches` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT");
-    $this->db->execute("ALTER TABLE `hlthcr_employees` ADD CONSTRAINT `fk__hlthcr_employees__id_job` FOREIGN KEY (`id_job`) REFERENCES `hlthcr_jobs` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT");
+    $this->db->execute("ALTER TABLE `ohs_employees` ADD CONSTRAINT `fk__ohs_employees__id_branch` FOREIGN KEY (`id_branch`) REFERENCES `ohs_branches` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT");
+    $this->db->execute("ALTER TABLE `ohs_employees` ADD CONSTRAINT `fk__ohs_employees__id_job` FOREIGN KEY (`id_job`) REFERENCES `ohs_jobs` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT");
   }
 
   public function downgradeForeignKeys(): void
   {
-    $this->db->execute("ALTER TABLE `hlthcr_employees` DROP FOREIGN KEY `fk__hlthcr_employees__id_branch`");
-    $this->db->execute("ALTER TABLE `hlthcr_employees` DROP FOREIGN KEY `fk__hlthcr_employees__id_job`");
+    $this->db->execute("ALTER TABLE `ohs_employees` DROP FOREIGN KEY `fk__ohs_employees__id_branch`");
+    $this->db->execute("ALTER TABLE `ohs_employees` DROP FOREIGN KEY `fk__ohs_employees__id_job`");
   }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees\Models\RecordManagers;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees\Models\RecordManagers;
 
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\RecordManagers\Branch;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\RecordManagers\Job;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\RecordManagers\Traits\BelongsToBranch;
-use Hubleto\App\External\WaiBlue\HlthcrCore\Models\RecordManagers\Traits\OffersActiveRecords;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\RecordManagers\Branch;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\RecordManagers\Job;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\RecordManagers\Traits\BelongsToBranch;
+use Hubleto\App\External\WaiBlue\OhsCore\Models\RecordManagers\Traits\OffersActiveRecords;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee extends \Hubleto\Erp\RecordManager
@@ -13,7 +13,7 @@ class Employee extends \Hubleto\Erp\RecordManager
   use BelongsToBranch;
   use OffersActiveRecords;
 
-  public $table = 'hlthcr_employees';
+  public $table = 'ohs_employees';
 
   // Options of the status filter in the table (URL filters[STATUS_FILTER]=<option>).
   const STATUS_FILTER = 'fEmployeeStatus';

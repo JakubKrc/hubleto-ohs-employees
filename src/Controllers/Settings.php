@@ -1,13 +1,13 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees\Controllers;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees\Controllers;
 
 class Settings extends \Hubleto\Erp\Controller
 {
   public function getBreadcrumbs(): array
   {
     return array_merge(parent::getBreadcrumbs(), [
-      ['url' => 'hlthcr-employees', 'content' => $this->translate('Employees')],
+      ['url' => 'ohs/employees', 'content' => $this->translate('Employees')],
       ['url' => 'settings', 'content' => $this->translate('Settings')],
     ]);
   }
@@ -15,6 +15,6 @@ class Settings extends \Hubleto\Erp\Controller
   public function prepareView(): void
   {
     parent::prepareView();
-    $this->setView('@Hubleto:App:External:WaiBlue:HlthcrEmployees/Settings.twig');
+    $this->setView('@Hubleto:App:External:WaiBlue:OhsEmployees/Settings.twig');
   }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees\Crons;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees\Crons;
 
-use Hubleto\App\External\WaiBlue\HlthcrEmployees\Models\Employee;
+use Hubleto\App\External\WaiBlue\OhsEmployees\Models\Employee;
 
 /**
  * Makes employees inactive once their end date has passed.

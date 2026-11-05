@@ -7,7 +7,7 @@ interface TableEmployeesProps extends TableProps {
 }
 
 const componentName = 'TableEmployees'
-const parentApp = 'Hubleto/App/External/WaiBlue/HlthcrEmployees'
+const parentApp = 'Hubleto/App/External/WaiBlue/OhsEmployees'
 
 // Computed (virtual) columns that hold a date: shown in the same format as the other dates.
 const VIRTUAL_DATE_COLUMNS = ['virt_last_exam_date', 'virt_exam_valid_to'];
@@ -26,7 +26,7 @@ const TableEmployees = (props: TableEmployeesProps) => {
     componentName={componentName}
     parentApp={parentApp}
     model={parentApp + '/Models/Employee'}
-    baseUrlSlug='hlthcr-employees/employees'
+    baseUrlSlug='ohs/employees/employees'
     endpointParams={{idBranch: idBranch}}
     formDefaultValues={idBranch > 0 ? {id_branch: idBranch} : {}}
     formModalProps={{type: 'right wide'}}

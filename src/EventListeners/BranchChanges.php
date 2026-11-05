@@ -1,10 +1,10 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees\EventListeners;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees\EventListeners;
 
 use Hubleto\App\Community\Customers\Models\Customer;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\Branch;
-use Hubleto\App\External\WaiBlue\HlthcrEmployees\Models\Employee;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\Branch;
+use Hubleto\App\External\WaiBlue\OhsEmployees\Models\Employee;
 use Hubleto\Framework\Interfaces\ModelInterface;
 
 /**
@@ -42,11 +42,11 @@ class BranchChanges extends \Hubleto\Framework\EventListener implements \Hubleto
       return;
     }
 
-    // Customer: the branch cascade (HlthcrBranches) updates branches without model events, so cover employees here.
+    // Customer: the branch cascade (OhsBranches) updates branches without model events, so cover employees here.
     $idCustomer = (int) $savedRecord['id'];
     $mEmployee->record
       ->whereIn('id_branch', function ($branchesOfCustomer) use ($idCustomer) {
-        $branchesOfCustomer->select('id')->from('hlthcr_branches')->where('id_customer', $idCustomer);
+        $branchesOfCustomer->select('id')->from('ohs_branches')->where('id_customer', $idCustomer);
       })
       ->update(['is_active' => 0]);
   }

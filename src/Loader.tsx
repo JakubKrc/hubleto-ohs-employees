@@ -5,10 +5,10 @@ import FormCustomizer from '@hubleto/react-ui/core/FormCustomizer';
 import { type FormMeta } from '@hubleto/react-ui/components/fc/FormInterfaces';
 import TableEmployees from './Components/FC/TableEmployees'
 
-const parentApp = 'Hubleto/App/External/WaiBlue/HlthcrEmployees';
+const parentApp = 'Hubleto/App/External/WaiBlue/OhsEmployees';
 const T = new Translator(parentApp + '/Loader', 'Loader');
 
-// "Zamestnanci" tab in the branch form (HlthcrBranches).
+// "Zamestnanci" tab in the branch form (OhsBranches).
 function mountBranchEmployeesTab() {
   return {
     title: T.translate('Employees'),
@@ -19,13 +19,13 @@ function mountBranchEmployeesTab() {
   };
 }
 
-class HlthcrEmployeesApp extends App {
+class OhsEmployeesApp extends App {
   init() {
     super.init();
-    globalThis.hubleto.registerReactComponent('HlthcrEmployeesTableEmployees', TableEmployees);
+    globalThis.hubleto.registerReactComponent('OhsEmployeesTableEmployees', TableEmployees);
 
-    FormCustomizer.addTab('FormBranch', 'hlthcr-employees', mountBranchEmployeesTab);
+    FormCustomizer.addTab('FormBranch', 'ohs-employees', mountBranchEmployeesTab);
   }
 }
 
-globalThis.hubleto.registerApp(parentApp, new HlthcrEmployeesApp());
+globalThis.hubleto.registerApp(parentApp, new OhsEmployeesApp());

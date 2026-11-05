@@ -1,13 +1,13 @@
 <?php
 
-namespace Hubleto\App\External\WaiBlue\HlthcrEmployees\Models;
+namespace Hubleto\App\External\WaiBlue\OhsEmployees\Models;
 
-use Hubleto\App\External\WaiBlue\HlthcrCore\Models\Traits\EmptyDatesAsNull;
-use Hubleto\App\External\WaiBlue\HlthcrCore\Models\Traits\UsesStoredValues;
+use Hubleto\App\External\WaiBlue\OhsCore\Models\Traits\EmptyDatesAsNull;
+use Hubleto\App\External\WaiBlue\OhsCore\Models\Traits\UsesStoredValues;
 use Hubleto\Framework\Exceptions\RecordSaveException;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\Branch;
-use Hubleto\App\External\WaiBlue\HlthcrBranches\Models\Job;
-use Hubleto\App\External\WaiBlue\HlthcrMedicalExams\Models\Exam;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\Branch;
+use Hubleto\App\External\WaiBlue\OhsBranches\Models\Job;
+use Hubleto\App\External\WaiBlue\OhsMedicalExams\Models\Exam;
 use Hubleto\Framework\Db\Column\Boolean;
 use Hubleto\Framework\Db\Column\Date;
 use Hubleto\Framework\Db\Column\Email;
@@ -19,14 +19,14 @@ use Hubleto\Framework\Db\Column\Virtual;
 /**
  * Employee of a client branch (not a Hubleto user). The job position decides the medical exam obligations.
  */
-class Employee extends \Hubleto\App\External\WaiBlue\HlthcrCore\Models\HlthcrModel
+class Employee extends \Hubleto\App\External\WaiBlue\OhsCore\Models\OhsModel
 {
   use EmptyDatesAsNull;
   use UsesStoredValues;
-  public string $table = 'hlthcr_employees';
+  public string $table = 'ohs_employees';
   public string $recordManagerClass = RecordManagers\Employee::class;
   public ?string $lookupSqlValue = 'concat({%TABLE%}.name, ifnull(concat(" (", date_format({%TABLE%}.date_of_birth, "%d.%m.%Y"), ")"), ""))';
-  public ?string $lookupUrlDetail = 'hlthcr-employees/employees/{%ID%}';
+  public ?string $lookupUrlDetail = 'ohs/employees/employees/{%ID%}';
 
   public array $relations = [
     'BRANCH' => [ self::BELONGS_TO, Branch::class, 'id_branch', 'id' ],
@@ -43,7 +43,7 @@ class Employee extends \Hubleto\App\External\WaiBlue\HlthcrCore\Models\HlthcrMod
       'id_job' => (new Lookup($this, $this->translate('Job position'), Job::class, 'RESTRICT'))->setDefaultVisible(),
       'virt_work_category' => (new Virtual($this, $this->translate('Work category')))
         ->setDefaultVisible()
-        ->setProperty('sql', 'select (' . Job::getWorkCategorySql('hlthcr_employees.id_job') . ')')
+        ->setProperty('sql', 'select (' . Job::getWorkCategorySql('ohs_employees.id_job') . ')')
       ,
       'street' => (new Varchar($this, $this->translate('Street'))),
       'city' => (new Varchar($this, $this->translate('City'))),
@@ -65,11 +65,11 @@ class Employee extends \Hubleto\App\External\WaiBlue\HlthcrCore\Models\HlthcrMod
 
   /**
    * Legacy employee list columns about medical exams. They read the table of the Exams app,
-   * so they exist only when HlthcrMedicalExams is installed (it depends on this app, not the other way).
+   * so they exist only when OhsMedicalExams is installed (it depends on this app, not the other way).
    */
   private function describeExamColumns(): array
   {
-    $isExamsAppInstalled = $this->appManager()->getApp('Hubleto\\App\\External\\WaiBlue\\HlthcrMedicalExams\\Loader') !== null;
+    $isExamsAppInstalled = $this->appManager()->getApp('Hubleto\\App\\External\\WaiBlue\\OhsMedicalExams\\Loader') !== null;
     if (!$isExamsAppInstalled) return [];
 
     // Only exams with a result count; entry and periodic exams decide the validity, as in the legacy list.
@@ -78,16 +78,16 @@ class Employee extends \Hubleto\App\External\WaiBlue\HlthcrCore\Models\HlthcrMod
     return [
       'virt_last_exam_date' => (new Virtual($this, $this->translate('Last medical exam')))
         ->setDefaultVisible()
-        ->setProperty('sql', 'select max(hlthcr_exams.date_exam) from hlthcr_exams
-          where hlthcr_exams.id_employee = hlthcr_employees.id and hlthcr_exams.result <> ' . $noResult . '
-          and hlthcr_exams.date_exam <= curdate()')
+        ->setProperty('sql', 'select max(ohs_exams.date_exam) from ohs_exams
+          where ohs_exams.id_employee = ohs_employees.id and ohs_exams.result <> ' . $noResult . '
+          and ohs_exams.date_exam <= curdate()')
       ,
       'virt_exam_valid_to' => (new Virtual($this, $this->translate('Medical exam valid to')))
         ->setDefaultVisible()
-        ->setProperty('sql', 'select hlthcr_exams.date_next_exam from hlthcr_exams
-          where hlthcr_exams.id_employee = hlthcr_employees.id and hlthcr_exams.exam_type in (' . $examTypesWithValidity . ')
-          and hlthcr_exams.result <> ' . $noResult . ' and hlthcr_exams.date_exam <= curdate()
-          order by hlthcr_exams.date_exam desc limit 1')
+        ->setProperty('sql', 'select ohs_exams.date_next_exam from ohs_exams
+          where ohs_exams.id_employee = ohs_employees.id and ohs_exams.exam_type in (' . $examTypesWithValidity . ')
+          and ohs_exams.result <> ' . $noResult . ' and ohs_exams.date_exam <= curdate()
+          order by ohs_exams.date_exam desc limit 1')
       ,
     ];
   }
@@ -178,11 +178,11 @@ class Employee extends \Hubleto\App\External\WaiBlue\HlthcrCore\Models\HlthcrMod
     if (!$branch) return;
 
     $duplicateExists = $this->record
-      ->join('hlthcr_branches', 'hlthcr_branches.id', '=', 'hlthcr_employees.id_branch')
-      ->where('hlthcr_branches.id_customer', (int) $branch->id_customer)
-      ->where('hlthcr_employees.name', trim((string) ($record['name'] ?? '')))
-      ->where('hlthcr_employees.date_of_birth', $dateOfBirth)
-      ->where('hlthcr_employees.id', '<>', (int) ($record['id'] ?? 0))
+      ->join('ohs_branches', 'ohs_branches.id', '=', 'ohs_employees.id_branch')
+      ->where('ohs_branches.id_customer', (int) $branch->id_customer)
+      ->where('ohs_employees.name', trim((string) ($record['name'] ?? '')))
+      ->where('ohs_employees.date_of_birth', $dateOfBirth)
+      ->where('ohs_employees.id', '<>', (int) ($record['id'] ?? 0))
       ->exists()
     ;
     if ($duplicateExists) {

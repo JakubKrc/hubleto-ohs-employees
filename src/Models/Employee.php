@@ -2,8 +2,6 @@
 
 namespace Hubleto\App\External\WaiBlue\OhsEmployees\Models;
 
-use Hubleto\App\External\WaiBlue\OhsCore\Models\Traits\EmptyDatesAsNull;
-use Hubleto\App\External\WaiBlue\OhsCore\Models\Traits\UsesStoredValues;
 use Hubleto\Framework\Exceptions\RecordSaveException;
 use Hubleto\App\External\WaiBlue\OhsBranches\Models\Branch;
 use Hubleto\App\External\WaiBlue\OhsBranches\Models\Job;
@@ -19,10 +17,8 @@ use Hubleto\Framework\Db\Column\Virtual;
 /**
  * Employee of a client branch (not a Hubleto user). The job position decides the medical exam obligations.
  */
-class Employee extends \Hubleto\App\External\WaiBlue\OhsCore\Models\OhsModel
+class Employee extends \Hubleto\Erp\Model
 {
-  use EmptyDatesAsNull;
-  use UsesStoredValues;
   public string $table = 'ohs_employees';
   public string $recordManagerClass = RecordManagers\Employee::class;
   public ?string $lookupSqlValue = 'concat({%TABLE%}.name, ifnull(concat(" (", date_format({%TABLE%}.date_of_birth, "%d.%m.%Y"), ")"), ""))';
@@ -130,7 +126,6 @@ class Employee extends \Hubleto\App\External\WaiBlue\OhsCore\Models\OhsModel
   public function onBeforeCreate(array $record): array
   {
     $record = parent::onBeforeCreate($record);
-    $record = $this->emptyDatesAsNull($record);
     $this->refuseJobOfOtherBranch($record);
     $this->refuseDuplicateInClient($record);
     $record['is_active'] = $this->isEmployeeActive($record);
@@ -140,12 +135,23 @@ class Employee extends \Hubleto\App\External\WaiBlue\OhsCore\Models\OhsModel
   public function onBeforeUpdate(array $record): array
   {
     $record = parent::onBeforeUpdate($record);
-    $record = $this->emptyDatesAsNull($record);
     $record = $this->addStoredValuesOfMissingColumns($record, ['id_branch', 'id_job', 'date_terminated', 'name', 'date_of_birth']);
     $this->refuseMoveToOtherClient($record);
     $this->refuseJobOfOtherBranch($record);
     $this->refuseDuplicateInClient($record);
     $record['is_active'] = $this->isEmployeeActive($record);
+    return $record;
+  }
+
+  // Hubleto passes only the submitted columns to onBeforeUpdate, but the save rules need these.
+  private function addStoredValuesOfMissingColumns(array $record, array $columns): array
+  {
+    $storedEmployee = $this->record->where('id', (int) ($record['id'] ?? 0))->first();
+    if (!$storedEmployee) return $record;
+
+    foreach ($columns as $column) {
+      if (!array_key_exists($column, $record)) $record[$column] = $storedEmployee->$column;
+    }
     return $record;
   }
 

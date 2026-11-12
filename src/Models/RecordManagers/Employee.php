@@ -30,19 +30,6 @@ class Employee extends \Hubleto\Erp\RecordManager
     return $this->belongsTo(Job::class, 'id_job', 'id');
   }
 
-  public function prepareReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): mixed
-  {
-    $query = parent::prepareReadQuery($query, $level, $includeRelations);
-
-    return $this->restrictToVisibleBranches($query);
-  }
-
-  public function prepareLookupQuery(string $search): mixed
-  {
-    $query = parent::prepareLookupQuery($search);
-    return $this->restrictToVisibleBranches($query);
-  }
-
   // Dropdowns offer active employees only, as in both legacy apps.
   public function restrictToOfferedRecords(mixed $query): mixed
   {

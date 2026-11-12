@@ -40,7 +40,8 @@ class Employee_0001 extends Migration
   {
     // RESTRICT: a branch with employees (and later their medical exams) cannot be deleted by accident.
     $this->db->execute("ALTER TABLE `ohs_employees` ADD CONSTRAINT `fk__ohs_employees__id_branch` FOREIGN KEY (`id_branch`) REFERENCES `ohs_branches` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT");
-    $this->db->execute("ALTER TABLE `ohs_employees` ADD CONSTRAINT `fk__ohs_employees__id_job` FOREIGN KEY (`id_job`) REFERENCES `ohs_jobs` (`id`) ON DELETE SET NULL ON UPDATE RESTRICT");
+    // A job position held by employees cannot be deleted (both legacy apps), so no employee loses their job.
+    $this->db->execute("ALTER TABLE `ohs_employees` ADD CONSTRAINT `fk__ohs_employees__id_job` FOREIGN KEY (`id_job`) REFERENCES `ohs_jobs` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT");
   }
 
   public function downgradeForeignKeys(): void
